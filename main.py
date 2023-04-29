@@ -1,9 +1,10 @@
 import probabilidade
-import os
 from typing import List
 
 
 global BARALHO 
+global CONTAGEM
+CONTAGEM = 0
 BARALHO = [0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 16]
 PLAYER = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 DEALER = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -24,21 +25,34 @@ def retirou_carta_do_baralho(deck: List[int], hand: List[int], carta:int):
 
 def player_jogada():
     """  """
-    carta = int(input("Player-> "))
-    retirou_carta_do_baralho(BARALHO, PLAYER, carta)
+    global CONTAGEM
+    pede = True
+    while(pede):
+        carta = int(input("Player-> "))
+        if(carta == 0):
+            pede = False
+        else:
+            retirou_carta_do_baralho(BARALHO, PLAYER, carta)
+            CONTAGEM += contagem(carta)
     return
 
 
 def dealer_jogada():
     """  """
-    carta = int(input("Dealer-> "))
-    retirou_carta_do_baralho(BARALHO, DEALER, carta)
+    global CONTAGEM
+    pede = True
+    while(pede):
+        carta = int(input("Dealer-> "))
+        if(carta == 0):
+            pede = False
+        else:
+            retirou_carta_do_baralho(BARALHO, DEALER, carta)
+            CONTAGEM += contagem(carta)
     return
 
 
 def jogada_inicial():
     """  """
-    player_jogada()
     player_jogada()
     dealer_jogada()
     return
@@ -52,13 +66,9 @@ def reseta_mao(deck: List[int]):
 
 def novo_jogo():
 
-    try:
-        os.system("clear")
-    except:
-        os.system("cls")
-
     reseta_mao(PLAYER)
     reseta_mao(DEALER)
+    show()
     jogada_inicial()
     return
 
@@ -67,11 +77,6 @@ def continuar_jogando():
 
     print("Player[0] - Dealer[1]")
     opt = int(input("> "))
-
-    try:
-        os.system("clear")
-    except:
-        os.system("cls")
 
     if(opt):
         dealer_jogada()
@@ -84,6 +89,7 @@ def continuar_jogando():
 
 def escolha_de_jogo():
     """  """
+    show()
     print("Continuar[0] - NovoJogo[1] - Sair[2]")
     opt = int(input("> "))
     if(opt == 0):
@@ -97,6 +103,7 @@ def escolha_de_jogo():
 
     return True
 
+
 def valor_mao(hand: List[int]) -> int:
     """  """
     soma = 0
@@ -104,12 +111,16 @@ def valor_mao(hand: List[int]) -> int:
         soma += hand[i] * i
     return soma
 
+
+
 def best_visu(lista_de_prob: List[float]):
     """  """
     indice = 17
     for prob in lista_de_prob:
         print(indice, "->", prob)
         indice += 1
+
+
 
 def minha_mao(hand: int):
     indice = 0
@@ -121,11 +132,29 @@ def minha_mao(hand: int):
         indice += 1
     print(mao)
 
+def contagem(carta: int) -> int:
+    mais_um = [2, 3, 4, 5, 6]
+    menos_um = [1, 10]
+    if carta in mais_um:
+        return 1
+    if carta in menos_um:
+        return -1
+    return 0
+
+def blackjack():
+    total_cartas = sum(BARALHO)
+    prob_as = BARALHO[1]/total_cartas
+    prob_dez = BARALHO[10]/total_cartas
+    print(round(prob_as * prob_dez * 2 * 100, 2))
+    return
+
+def tirar_dez():
+    return round(BARALHO[10]/sum(BARALHO) * 100, 2)
 
 def show():
     """  """
-    print("-------------------BARALHO--------------")
-    print(BARALHO)
+    print("-----------------BARALHO---------------")
+    print(BARALHO[1:])
     print()
 
     print("-----------------PLAYER----------------") #1 
@@ -134,11 +163,16 @@ def show():
     hand = valor_mao(PLAYER)
     probabilidade.show_probabilidade(hand, BARALHO, 1)
 
-    print("----------------DEALER-------------") #0
+    print("-----------------DEALER----------------") #0
     print("MÃO->", end="")
     minha_mao(DEALER)
     hand = valor_mao(DEALER)
     probabilidade.show_probabilidade(hand, BARALHO, 0)
+    print("---------------------------------------")
+    print("CONTAGEM->", CONTAGEM)
+    print("BLACKJACK->", end="")
+    blackjack()
+    print("DEZ->", tirar_dez())
     print()
     return
 
@@ -155,7 +189,6 @@ def main():
     inicio_de_jogo()
     game = True
     while(game == True):
-        show()
         game = escolha_de_jogo()
     return
 
