@@ -90,7 +90,6 @@ def novo_jogo():
     return
 
 
-
 def escolha_de_jogo():
     """  """
     show()
@@ -111,8 +110,10 @@ def escolha_de_jogo():
 def valor_mao(hand: List[int]) -> int:
     """  """
     soma = 0
-    for i in range(len(hand)):
-        soma += hand[i] * i
+    for num in hand:
+        if num == 1 and soma < 11:
+            soma += 10
+        soma += num
     return soma
 
 
@@ -127,6 +128,7 @@ def best_visu(lista_de_prob: List[float]):
 
 
 def minha_mao(hand: int):
+    """  """
     indice = 0
     mao = []
     for item in hand:
@@ -135,8 +137,10 @@ def minha_mao(hand: int):
                 mao.append(indice)
         indice += 1
     print(mao)
+    return mao
 
 def contagem(carta: int) -> int:
+    """  """
     mais_um = [2, 3, 4, 5, 6]
     menos_um = [1, 10]
     if carta in mais_um:
@@ -145,7 +149,15 @@ def contagem(carta: int) -> int:
         return -1
     return 0
 
+
+def contagem_real():
+    """  """
+    total_cartas = sum(BARALHO)
+    return CONTAGEM * 52 / total_cartas
+
+
 def blackjack():
+    """  """
     total_cartas = sum(BARALHO)
     prob_as = BARALHO[1]/total_cartas
     prob_dez = BARALHO[10]/total_cartas
@@ -153,7 +165,10 @@ def blackjack():
     return
 
 def tirar_dez():
+    """  """
     return round(BARALHO[10]/sum(BARALHO) * 100, 2)
+
+
 
 def show():
     """  """
@@ -163,17 +178,20 @@ def show():
 
     print("-----------------PLAYER----------------") #1 
     print("MÃO->", end="")
-    minha_mao(PLAYER)
-    hand = valor_mao(PLAYER)
+    mao_player = minha_mao(PLAYER)
+    hand = valor_mao(mao_player)
+    print(hand)
     probabilidade.show_probabilidade(hand, BARALHO, 1)
 
     print("-----------------DEALER----------------") #0
     print("MÃO->", end="")
-    minha_mao(DEALER)
-    hand = valor_mao(DEALER)
+    mao_dealer = minha_mao(DEALER)
+    hand = valor_mao(mao_dealer)
+    print(hand)
     probabilidade.show_probabilidade(hand, BARALHO, 0)
     print("---------------------------------------")
     print("CONTAGEM->", CONTAGEM)
+    print("REAL->", round(contagem_real(), 2))
     print("BLACKJACK-> ", end="")
     blackjack()
     print("DEZ->", tirar_dez())
