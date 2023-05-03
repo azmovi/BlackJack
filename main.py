@@ -8,6 +8,7 @@ CONTAGEM = 0
 BARALHO = [0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 16]
 PLAYER = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 DEALER = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LIXO = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 
 def quantidade_de_baralhos():
@@ -51,9 +52,24 @@ def dealer_jogada():
     return
 
 
-def jogada_inicial():
+def lixo_jogada():
+    """  """
+    global CONTAGEM
+    pede = True
+    while(pede):
+        carta = int(input("Outro-> "))
+        if(carta == 0):
+            pede = False
+        else:
+            retirou_carta_do_baralho(BARALHO, LIXO, carta)
+            CONTAGEM += contagem(carta)
+    return
+
+
+def jogada_padrao():
     """  """
     player_jogada()
+    lixo_jogada()
     dealer_jogada()
     return
 
@@ -64,27 +80,15 @@ def reseta_mao(deck: List[int]):
         deck[i] = 0
     return 
 
-def novo_jogo():
 
+def novo_jogo():
+    """  """
     reseta_mao(PLAYER)
     reseta_mao(DEALER)
     show()
-    jogada_inicial()
+    jogada_padrao()
     return
 
-
-def continuar_jogando():
-
-    print("Player[0] - Dealer[1]")
-    opt = int(input("> "))
-
-    if(opt):
-        dealer_jogada()
-
-    else:
-        player_jogada()
-
-    return
 
 
 def escolha_de_jogo():
@@ -93,7 +97,7 @@ def escolha_de_jogo():
     print("Continuar[0] - NovoJogo[1] - Sair[2]")
     opt = int(input("> "))
     if(opt == 0):
-        continuar_jogando()
+        jogada_padrao()
 
     elif(opt == 1):
         novo_jogo()
@@ -170,7 +174,7 @@ def show():
     probabilidade.show_probabilidade(hand, BARALHO, 0)
     print("---------------------------------------")
     print("CONTAGEM->", CONTAGEM)
-    print("BLACKJACK->", end="")
+    print("BLACKJACK-> ", end="")
     blackjack()
     print("DEZ->", tirar_dez())
     print()
@@ -180,7 +184,7 @@ def inicio_de_jogo():
 
     quantidade_de_baralhos()
     show()
-    jogada_inicial()
+    jogada_padrao()
     return
     
 
